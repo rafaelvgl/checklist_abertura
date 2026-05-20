@@ -1,1 +1,1063 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Abertura ao Vivo — Bonità</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f;
+  --surface: #181818;
+  --surface2: #222222;
+  --border: #2a2a2a;
+  --red: #e8332a;
+  --red-dim: #7a1a16;
+  --green: #27a85a;
+  --green-dim: #0f4025;
+  --amber: #e8a020;
+  --amber-dim: #5a3a08;
+  --cream: #f5efe4;
+  --muted: #666;
+  --text: #f0ece4;
+  --text2: #999;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
+body {
+  background: var(--bg);
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── TELA DE LOGIN ── */
+#login-screen {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+  position: relative;
+  overflow: hidden;
+}
+#login-screen::before {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232,51,42,0.08) 0%, transparent 70%);
+  top: -100px; left: 50%; transform: translateX(-50%);
+  pointer-events: none;
+}
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  position: relative;
+}
+.login-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  letter-spacing: 3px;
+  color: var(--cream);
+  line-height: 1;
+}
+.login-logo span { color: var(--red); }
+.login-sub {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--muted);
+  margin: 6px 0 32px;
+}
+.login-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text2);
+  text-align: left;
+  display: block;
+  margin-bottom: 10px;
+}
+.pessoa-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.pessoa-btn {
+  padding: 14px 8px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.pessoa-btn .avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px;
+}
+.pessoa-btn:hover { border-color: var(--red); background: #1e1e1e; }
+.pessoa-btn.selected { border-color: var(--red); background: rgba(232,51,42,0.1); }
+
+.data-hoje {
+  font-size: 12px;
+  color: var(--text2);
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  background: var(--surface2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.data-hoje strong { color: var(--text); }
+
+.btn-entrar {
+  width: 100%;
+  padding: 14px;
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+  opacity: 0.4;
+  pointer-events: none;
+}
+.btn-entrar.ativo { opacity: 1; pointer-events: auto; }
+.btn-entrar.ativo:hover { background: #c8201a; transform: translateY(-1px); }
+
+/* ── APP PRINCIPAL ── */
+#app { display: none; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.topbar-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.topbar-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--cream);
+  flex: 1;
+}
+.topbar-logo span { color: var(--red); }
+.topbar-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text2);
+}
+.topbar-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  color: white;
+}
+.sync-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+.sync-dot.syncing { background: var(--amber); animation: none; }
+
+/* TABS */
+.tabs {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tabs-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 0;
+  white-space: nowrap;
+}
+.tab {
+  padding: 10px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+  user-select: none;
+}
+.tab:hover { color: var(--text); }
+.tab.ativa { color: var(--red); border-bottom-color: var(--red); }
+
+/* PROGRESSO GLOBAL */
+.progresso-bar {
+  background: var(--surface2);
+  height: 3px;
+}
+.progresso-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--red), var(--amber));
+  transition: width 0.4s ease;
+  width: 0%;
+}
+
+/* MAIN */
+.main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 20px 20px 80px;
+}
+
+/* RESUMO TOPO */
+.resumo-wrap {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.resumo-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+}
+.resumo-card .num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  letter-spacing: 1px;
+  line-height: 1;
+}
+.resumo-card .label { font-size: 11px; color: var(--text2); margin-top: 2px; text-transform: uppercase; letter-spacing: 1px; }
+.resumo-card.verde .num { color: var(--green); }
+.resumo-card.vermelho .num { color: var(--red); }
+.resumo-card.branco .num { color: var(--cream); }
+
+/* SEÇÃO */
+.secao {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.secao-header {
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.secao-header:hover { background: var(--surface2); }
+.secao-icone { font-size: 18px; width: 28px; text-align: center; }
+.secao-titulo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 17px;
+  letter-spacing: 1.5px;
+  flex: 1;
+}
+.secao-badge {
+  font-size: 11px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--surface2);
+  color: var(--text2);
+  font-weight: 500;
+}
+.secao-badge.completo { background: var(--green-dim); color: var(--green); }
+.secao-chevron {
+  color: var(--muted);
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+.secao.fechada .secao-chevron { transform: rotate(-90deg); }
+.secao.fechada .secao-body { display: none; }
+
+/* ITEM */
+.item {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: background 0.12s;
+  cursor: pointer;
+  position: relative;
+}
+.item:last-child { border-bottom: none; }
+.item:hover { background: #1c1c1c; }
+.item.bloqueado { cursor: not-allowed; opacity: 0.5; }
+
+.item-check {
+  width: 20px; height: 20px;
+  border-radius: 5px;
+  border: 1.5px solid #444;
+  flex-shrink: 0;
+  margin-top: 2px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  background: transparent;
+}
+.item-check svg { display: none; }
+
+.item.marcado .item-check { background: var(--green); border-color: var(--green); }
+.item.marcado .item-check svg { display: block; }
+.item.marcado .item-titulo { opacity: 0.4; }
+.item.marcado .titulo-texto { text-decoration: line-through; }
+.item.marcado .registro-tag { text-decoration: none; opacity: 1; }
+
+.item-corpo { flex: 1; min-width: 0; }
+
+/* título + chips inline, sem quebrar altura */
+.item-titulo {
+  font-size: 14px; font-weight: 400; line-height: 1.5;
+  transition: opacity 0.2s;
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 5px;
+}
+.item-titulo .titulo-texto { flex-shrink: 0; }
+.item-desc { font-size: 12px; color: var(--text2); font-weight: 300; margin-top: 1px; line-height: 1.4; }
+
+/* chips inline */
+.item-registros { display: contents; }
+.registro-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  padding: 1px 6px 1px 3px;
+  border-radius: 999px;
+  background: var(--green-dim);
+  color: var(--green);
+  font-weight: 500;
+  line-height: 1.6;
+  vertical-align: middle;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.registro-tag .r-avatar {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 8px;
+  font-family: 'Bebas Neue', sans-serif;
+  color: white;
+  flex-shrink: 0;
+}
+.registro-tag .r-hora { opacity: 0.65; font-weight: 300; }
+
+/* INPUT FRESCO */
+.qtd-row {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.qtd-row label { font-size: 11px; color: var(--text2); text-transform: uppercase; letter-spacing: 0.8px; }
+.qtd-row input {
+  width: 68px;
+  padding: 4px 8px;
+  background: var(--surface2);
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  font-size: 13px;
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+  outline: none;
+  text-align: center;
+  transition: border-color 0.15s;
+}
+.qtd-row input:focus { border-color: var(--red); }
+.sem { width: 8px; height: 8px; border-radius: 50%; background: #444; flex-shrink: 0; transition: background 0.2s; }
+.sem.ok { background: var(--green); }
+.sem.warn { background: var(--amber); }
+.sem.low { background: var(--red); }
+.qtd-status { font-size: 11px; color: var(--text2); }
+.qtd-status.ok { color: var(--green); }
+.qtd-status.warn { color: var(--amber); }
+.qtd-status.low { color: var(--red); }
+
+/* ── ABA HISTÓRICO ── */
+#aba-historico { display: none; }
+.hist-dia {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.hist-dia-header {
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+}
+.hist-dia-header h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+.hist-pct {
+  font-size: 12px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-weight: 500;
+}
+.hist-pct.completo { background: var(--green-dim); color: var(--green); }
+.hist-pct.parcial { background: var(--amber-dim); color: var(--amber); }
+.hist-body { padding: 14px 18px; }
+.hist-evento {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 12px;
+}
+.hist-evento:last-child { border-bottom: none; }
+.hist-evento .h-avatar {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 11px;
+  color: white;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.hist-evento .h-info { flex: 1; }
+.hist-evento .h-nome { font-weight: 500; color: var(--text); }
+.hist-evento .h-acao { color: var(--text2); }
+.hist-evento .h-hora { color: var(--muted); font-size: 11px; margin-top: 1px; }
+
+/* LOADING */
+.loading-overlay {
+  position: fixed; inset: 0;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 3px;
+  color: var(--muted);
+  transition: opacity 0.3s;
+}
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 20px;
+  font-size: 13px;
+  color: var(--text);
+  z-index: 300;
+  transition: transform 0.3s ease;
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+.toast .t-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+@media (max-width: 480px) {
+  .resumo-wrap { grid-template-columns: repeat(3, 1fr); }
+  .resumo-card .num { font-size: 22px; }
+  .tabs-inner { gap: 0; }
+  .tab { padding: 10px 12px; font-size: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">CARREGANDO…</div>
+
+<!-- ═══════════════ LOGIN ═══════════════ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">Bonità <span>🍕</span></div>
+    <div class="login-sub">Checklist de Abertura · 18h30</div>
+
+    <div class="data-hoje">
+      <span>Data de hoje</span>
+      <strong id="login-data">—</strong>
+    </div>
+
+    <span class="login-label">Quem está abrindo?</span>
+    <div class="pessoa-grid" id="pessoa-grid"><!-- gerado por JS --></div>
+
+    <button class="btn-entrar" id="btn-entrar" onclick="entrar()">ENTRAR</button>
+  </div>
+</div>
+
+<!-- ═══════════════ APP ═══════════════ -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-logo">Bonità <span>Pizzaria</span></div>
+      <div class="topbar-user">
+        <div class="sync-dot" id="sync-dot" title="Sincronizando..."></div>
+        <div class="topbar-avatar" id="topbar-avatar"></div>
+        <span id="topbar-nome">—</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tabs-inner">
+      <div class="tab ativa" onclick="mudarAba('checklist', this)">✓ Checklist</div>
+      <div class="tab" onclick="mudarAba('historico', this)">📋 Histórico</div>
+    </div>
+  </div>
+
+  <div class="progresso-bar"><div class="progresso-fill" id="prog-fill"></div></div>
+
+  <!-- ABA CHECKLIST -->
+  <div id="aba-checklist">
+    <div class="main">
+      <div class="resumo-wrap">
+        <div class="resumo-card verde"><div class="num" id="res-feito">0</div><div class="label">Feitos</div></div>
+        <div class="resumo-card vermelho"><div class="num" id="res-falta">0</div><div class="label">Faltam</div></div>
+        <div class="resumo-card branco"><div class="num" id="res-pessoas">0</div><div class="label">Ativos</div></div>
+      </div>
+      <div id="secoes-container"><!-- gerado por JS --></div>
+    </div>
+  </div>
+
+  <!-- ABA HISTÓRICO -->
+  <div id="aba-historico">
+    <div class="main">
+      <div id="hist-container"><div style="color:var(--text2);font-size:14px;padding:20px 0;">Carregando histórico…</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════
+   CONFIGURAÇÕES
+══════════════════════════════════════════ */
+const PESSOAS = [
+  { nome: 'Rafael',  cor: '#e8332a', emoji: '👨‍🍳' },
+  { nome: 'João',    cor: '#2196f3', emoji: '🧑‍🍳' },
+  { nome: 'Maria',   cor: '#9c27b0', emoji: '👩‍🍳' },
+  { nome: 'Pedro',   cor: '#ff9800', emoji: '🧑‍🍳' },
+  { nome: 'Ana',     cor: '#00bcd4', emoji: '👩‍🍳' },
+  { nome: 'Carlos',  cor: '#4caf50', emoji: '🧑‍🍳' },
+];
+
+const SECOES = [
+  {
+    id: 'massas', icone: '🍕', titulo: 'Massas',
+    itens: [
+      { id: 'massas-1', titulo: 'Abrir massas conforme plano diário', desc: 'Verificar plano semanal e produzir quantidade correta para a noite' },
+      { id: 'massas-2', titulo: 'Sinalizar prateleira da fermentação longa', desc: 'Plaquinha do dia na bandeja correta — não misturar lotes' },
+      { id: 'massas-3', titulo: 'Estoque de bases suficiente para o plano', desc: 'Incluir margem de ±10%' },
+      { id: 'massas-4', titulo: 'Fubá abastecido na mesa de trabalho', desc: 'Recipiente com quantidade suficiente para a noite toda' },
+    ]
+  },
+  {
+    id: 'molho', icone: '🥫', titulo: 'Molho e Coberturas',
+    itens: [
+      { id: 'molho-1', titulo: 'Base de molho preparada conforme plano', desc: 'Tempero e consistência padronizados' },
+      { id: 'molho-2', titulo: 'Balde de molho posicionado na mesa de montagem', desc: 'Com concha, identificado e em local acessível' },
+      { id: 'molho-3', titulo: 'Mussarela ralada / fatiada conforme plano', desc: 'Porcionada e refrigerada até o início do serviço' },
+      { id: 'molho-4', titulo: 'Requeijão — mín. 1 refil no estoque', desc: '2 bisnagas prontas para uso + 1 refil reserva' },
+    ]
+  },
+  {
+    id: 'frescos', icone: '🥬', titulo: 'Ingredientes Frescos',
+    itens: [
+      { id: 'frescos-1', titulo: 'Morango', desc: 'Mín. 2 bandejas — verificar frescor', fresco: { min: 2, unit: 'bandejas', step: 0.5 } },
+      { id: 'frescos-2', titulo: 'Abobrinha', desc: 'Mín. 1 kg — verificar firmeza e cor', fresco: { min: 1, unit: 'kg', step: 0.1 } },
+      { id: 'frescos-3', titulo: 'Kitchequete', desc: 'Mín. 3 embalagens — conferir validade', fresco: { min: 3, unit: 'embal.', step: 1 } },
+      { id: 'frescos-4', titulo: 'Cebola inteira', desc: 'Mín. 4 unidades no estoque', fresco: { min: 4, unit: 'unid.', step: 1 } },
+      { id: 'frescos-5', titulo: 'Cebola fatiada', desc: 'Mín. 1 unidade pré-cortada, refrigerada', fresco: { min: 1, unit: 'unid.', step: 0.5 } },
+    ]
+  },
+  {
+    id: 'emb', icone: '📦', titulo: 'Embalagens',
+    itens: [
+      { id: 'emb-1', titulo: 'Caixas Broto — conforme plano da noite', desc: 'Separadas no ponto de embalagem' },
+      { id: 'emb-2', titulo: 'Caixas linha principal — conforme plano', desc: 'Respeitar estimativa de vendas do turno' },
+      { id: 'emb-3', titulo: 'Insumos de embalagem abastecidos', desc: 'Guardanapos, sacos, fita, lacre' },
+    ]
+  },
+  {
+    id: 'forno', icone: '🔥', titulo: 'Forno e Equipamentos',
+    itens: [
+      { id: 'forno-1', titulo: '⚠️ Forno: ligar só ao sair o 1º pedido', desc: 'Não ligar antes — economia de gás e controle de temperatura' },
+      { id: 'forno-2', titulo: 'Verificar gás e pressão antes da abertura', desc: 'Checar manômetro; avisar se nível baixo' },
+      { id: 'forno-3', titulo: 'Equipamentos de apoio funcionando', desc: 'Geladeira, sistema de pedidos, iluminação, maquininha' },
+    ]
+  },
+  {
+    id: 'org', icone: '✨', titulo: 'Organização e Limpeza',
+    itens: [
+      { id: 'org-1', titulo: 'Mesa de montagem limpa e sanitizada', desc: 'Utensílios no lugar, superfície higienizada' },
+      { id: 'org-2', titulo: 'Área de expedição organizada', desc: 'Bolsas térmicas verificadas, saída desobstruída' },
+      { id: 'org-3', titulo: 'Troco preparado no caixa', desc: 'Notas pequenas para entregas em dinheiro' },
+      { id: 'org-4', titulo: 'Uniforme e higiene pessoal em ordem', desc: 'Touca, avental, mãos lavadas antes do serviço' },
+    ]
+  },
+];
+
+/* ══════════════════════════════════════════
+   ESTADO
+══════════════════════════════════════════ */
+let usuarioAtual = null;
+let corAtual = '#e8332a';
+let dataHoje = '';
+let estado = {};       // { itemId: [ {nome, cor, hora, ts} ] }
+let pessoasAtivas = new Set();
+let syncInterval = null;
+let lastSyncHash = '';
+
+/* ══════════════════════════════════════════
+   UTILITÁRIOS
+══════════════════════════════════════════ */
+function dataISO() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function horaAgora() {
+  const d = new Date();
+  return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+}
+function fmtData(iso) {
+  if (!iso) return '';
+  const [y,m,d] = iso.split('-');
+  const dias = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const dt = new Date(y, m-1, d);
+  return `${dias[dt.getDay()]}, ${d}/${m}/${y}`;
+}
+function corPessoa(nome) {
+  const p = PESSOAS.find(x => x.nome === nome);
+  return p ? p.cor : '#888';
+}
+function inicialPessoa(nome) { return (nome || '?')[0].toUpperCase(); }
+
+function showToast(msg, cor='var(--green)') {
+  const t = document.getElementById('toast');
+  t.innerHTML = `<span class="t-dot" style="background:${cor}"></span>${msg}`;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ══════════════════════════════════════════
+   STORAGE
+   shared:true nao funciona neste ambiente.
+   Estrategia: cada usuario salva sua propria
+   fatia em storage pessoal (shared:false).
+   Chave: bonita_YYYYMMDD_NomeUsuario
+   Sincronizacao: le fatias de todos os nomes
+   conhecidos e mescla num estado unificado.
+══════════════════════════════════════════ */
+function dataKey(iso) { return iso.replace(/-/g, ''); }
+function KEY_FATIA(d, nome) {
+  // so letras, numeros e underscore
+  const n = nome.replace(/[^a-zA-Z0-9]/g, '');
+  return 'bonita_' + dataKey(d) + '_' + n;
+}
+
+// Mescla fatias de varias pessoas num estado unificado
+function mesclarFatias(fatias) {
+  const merged = {};
+  for (const fatia of fatias) {
+    for (const [itemId, regs] of Object.entries(fatia.estado || {})) {
+      if (!merged[itemId]) merged[itemId] = [];
+      for (const reg of (regs || [])) {
+        // evitar duplicata do mesmo usuario no mesmo item
+        const jaExiste = merged[itemId].some(r => r.nome === reg.nome);
+        if (!jaExiste) merged[itemId].push(reg);
+      }
+    }
+  }
+  return merged;
+}
+
+async function salvarEstado() {
+  const dot = document.getElementById('sync-dot');
+  if (dot) dot.classList.add('syncing');
+  try {
+    // Salva apenas os registros desta pessoa
+    const minhaFatia = {};
+    for (const [itemId, regs] of Object.entries(estado)) {
+      const meus = (regs || []).filter(r => r.nome === usuarioAtual);
+      if (meus.length > 0) minhaFatia[itemId] = meus;
+    }
+    const payload = JSON.stringify({ estado: minhaFatia, ts: Date.now() });
+    const result = await window.storage.set(KEY_FATIA(dataHoje, usuarioAtual), payload);
+    if (!result) throw new Error('Storage retornou null');
+    lastSyncHash = JSON.stringify(estado);
+  } catch(e) {
+    console.error('Erro ao salvar:', e);
+    showToast('Falha ao salvar — verifique conexao', 'var(--red)');
+  }
+  if (dot) dot.classList.remove('syncing');
+}
+
+async function carregarEstado() {
+  try {
+    const fatias = [];
+    const ativasSet = new Set();
+    for (const p of PESSOAS) {
+      try {
+        const r = await window.storage.get(KEY_FATIA(dataHoje, p.nome));
+        if (r) {
+          const dados = JSON.parse(r.value);
+          fatias.push(dados);
+          ativasSet.add(p.nome);
+        }
+      } catch(e) { /* pessoa ainda nao salvou nada hoje */ }
+    }
+    const merged = mesclarFatias(fatias);
+    const novoHash = JSON.stringify(merged);
+    if (novoHash !== lastSyncHash) {
+      estado = merged;
+      lastSyncHash = novoHash;
+      renderChecklist();
+    }
+    pessoasAtivas = ativasSet;
+    const el = document.getElementById('res-pessoas');
+    if (el) el.textContent = pessoasAtivas.size;
+  } catch(e) {
+    console.error('Erro ao carregar:', e);
+  }
+}
+
+async function carregarHistorico() {
+  const container = document.getElementById('hist-container');
+  container.innerHTML = '<div style="color:var(--text2);font-size:14px;padding:20px 0;">Buscando histórico…</div>';
+  // últimos 7 dias
+  const dias = [];
+  for (let i = 1; i <= 7; i++) {
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    dias.push(iso);
+  }
+  const resultados = [];
+  for (const dia of dias) {
+    try {
+      const fatias = [];
+      for (const p of PESSOAS) {
+        try {
+          const r = await window.storage.get(KEY_FATIA(dia, p.nome));
+          if (r) fatias.push(JSON.parse(r.value));
+        } catch(e) {}
+      }
+      if (fatias.length > 0) {
+        const est = mesclarFatias(fatias);
+        const totalItens = SECOES.reduce((a,s) => a + s.itens.length, 0);
+        const feitos = Object.keys(est).filter(k => est[k] && est[k].length > 0).length;
+        resultados.push({ dia, est, feitos, total: totalItens });
+      }
+    } catch(e) {}
+  }
+  if (resultados.length === 0) {
+    container.innerHTML = '<div style="color:var(--text2);font-size:14px;padding:20px 0;">Nenhum histórico encontrado nos últimos 7 dias.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  for (const { dia, est, feitos, total } of resultados) {
+    const pct = Math.round((feitos / total) * 100);
+    const completo = pct === 100;
+    const div = document.createElement('div');
+    div.className = 'hist-dia';
+    // montar todos os eventos ordenados por timestamp
+    const eventos = [];
+    for (const [itemId, regs] of Object.entries(est)) {
+      for (const reg of (regs || [])) {
+        // encontrar nome do item
+        let nomeItem = itemId;
+        for (const sec of SECOES) {
+          const it = sec.itens.find(i => i.id === itemId);
+          if (it) { nomeItem = it.titulo; break; }
+        }
+        eventos.push({ ...reg, itemNome: nomeItem });
+      }
+    }
+    eventos.sort((a,b) => a.ts - b.ts);
+    const eventosHTML = eventos.map(ev => `
+      <div class="hist-evento">
+        <div class="h-avatar" style="background:${corPessoa(ev.nome)}">${inicialPessoa(ev.nome)}</div>
+        <div class="h-info">
+          <div><span class="h-nome">${ev.nome}</span> <span class="h-acao">marcou: ${ev.itemNome}</span></div>
+          <div class="h-hora">⏱ ${ev.hora}</div>
+        </div>
+      </div>`).join('');
+    div.innerHTML = `
+      <div class="hist-dia-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+        <h3>${fmtData(dia)}</h3>
+        <span class="hist-pct ${completo?'completo':'parcial'}">${feitos}/${total} — ${pct}%</span>
+      </div>
+      <div class="hist-body" style="display:none">
+        ${eventosHTML || '<div style="color:var(--text2);font-size:13px;">Nenhuma ação registrada.</div>'}
+      </div>`;
+    container.appendChild(div);
+  }
+}
+
+/* ══════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════ */
+function initLogin() {
+  dataHoje = dataISO();
+  document.getElementById('login-data').textContent = fmtData(dataHoje);
+  const grid = document.getElementById('pessoa-grid');
+  PESSOAS.forEach(p => {
+    const btn = document.createElement('button');
+    btn.className = 'pessoa-btn';
+    btn.innerHTML = `
+      <div class="avatar" style="background:${p.cor}">${inicialPessoa(p.nome)}</div>
+      ${p.nome}`;
+    btn.onclick = () => selecionarPessoa(p.nome, p.cor, btn);
+    grid.appendChild(btn);
+  });
+}
+
+function selecionarPessoa(nome, cor, btn) {
+  document.querySelectorAll('.pessoa-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  usuarioAtual = nome;
+  corAtual = cor;
+  const be = document.getElementById('btn-entrar');
+  be.classList.add('ativo');
+}
+
+async function entrar() {
+  if (!usuarioAtual) return;
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  // topbar
+  const av = document.getElementById('topbar-avatar');
+  av.style.background = corAtual;
+  av.textContent = inicialPessoa(usuarioAtual);
+  document.getElementById('topbar-nome').textContent = usuarioAtual;
+  // carregar estado do dia
+  await carregarEstado();
+  buildSecoes();
+  renderChecklist();
+  document.getElementById('loading').style.opacity = '0';
+  setTimeout(() => document.getElementById('loading').style.display = 'none', 300);
+  // sync a cada 5s
+  syncInterval = setInterval(carregarEstado, 5000);
+}
+
+/* ══════════════════════════════════════════
+   BUILD HTML DAS SEÇÕES (só uma vez)
+══════════════════════════════════════════ */
+function buildSecoes() {
+  const container = document.getElementById('secoes-container');
+  container.innerHTML = '';
+  SECOES.forEach(sec => {
+    const div = document.createElement('div');
+    div.className = 'secao';
+    div.id = `sec-${sec.id}`;
+    let itensHTML = sec.itens.map(it => {
+      let frescoHTML = '';
+      if (it.fresco) {
+        frescoHTML = `
+          <div class="qtd-row">
+            <label>Qtd em estoque</label>
+            <input type="number" min="0" step="${it.fresco.step}" placeholder="0"
+              id="qtd-${it.id}"
+              onclick="event.stopPropagation()"
+              oninput="avaliarQtd(this, ${it.fresco.min}, '${it.fresco.unit}')">
+            <div class="sem" id="sem-${it.id}"></div>
+            <span class="qtd-min" style="font-size:11px;color:var(--text2)">mín. ${it.fresco.min} ${it.fresco.unit}</span>
+            <span class="qtd-status" id="qst-${it.id}"></span>
+          </div>`;
+      }
+      return `
+        <div class="item" id="item-${it.id}" onclick="toggleItem('${it.id}')">
+          <div class="item-check"><svg width="11" height="8" fill="none" stroke="white" stroke-width="2.5"><polyline points="1,4.5 4,7.5 10,1"/></svg></div>
+          <div class="item-corpo">
+            <div class="item-titulo">
+              <span class="titulo-texto">${it.titulo}</span>
+              <span class="item-registros" id="regs-${it.id}"></span>
+            </div>
+            <div class="item-desc">${it.desc}</div>
+            ${frescoHTML}
+          </div>
+        </div>`;
+    }).join('');
+    div.innerHTML = `
+      <div class="secao-header" onclick="toggleSecao('${sec.id}')">
+        <span class="secao-icone">${sec.icone}</span>
+        <span class="secao-titulo">${sec.titulo}</span>
+        <span class="secao-badge" id="badge-${sec.id}">0/${sec.itens.length}</span>
+        <span class="secao-chevron">▼</span>
+      </div>
+      <div class="secao-body">${itensHTML}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleSecao(id) {
+  document.getElementById(`sec-${id}`).classList.toggle('fechada');
+}
+
+/* ══════════════════════════════════════════
+   INTERAÇÃO — MARCAR ITEM
+══════════════════════════════════════════ */
+async function toggleItem(itemId) {
+  if (!usuarioAtual) return;
+  if (!estado[itemId]) estado[itemId] = [];
+  // verificar se esta pessoa já marcou
+  const jaFez = estado[itemId].some(r => r.nome === usuarioAtual);
+  if (jaFez) {
+    // desmarcar só o próprio registro
+    estado[itemId] = estado[itemId].filter(r => r.nome !== usuarioAtual);
+    showToast(`${usuarioAtual} desmarcou o item`, 'var(--amber)');
+  } else {
+    estado[itemId].push({
+      nome: usuarioAtual,
+      cor: corAtual,
+      hora: horaAgora(),
+      ts: Date.now()
+    });
+    showToast(`✓ Marcado por ${usuarioAtual}`, 'var(--green)');
+  }
+  await salvarEstado();
+  renderChecklist();
+}
+
+/* ══════════════════════════════════════════
+   RENDER
+══════════════════════════════════════════ */
+function renderChecklist() {
+  let totalItens = 0, totalFeitos = 0;
+  SECOES.forEach(sec => {
+    let secFeitos = 0;
+    sec.itens.forEach(it => {
+      totalItens++;
+      const regs = estado[it.id] || [];
+      const marcado = regs.length > 0;
+      if (marcado) { secFeitos++; totalFeitos++; }
+      const itemEl = document.getElementById(`item-${it.id}`);
+      if (!itemEl) return;
+      itemEl.classList.toggle('marcado', marcado);
+      // registros
+      const regsEl = document.getElementById(`regs-${it.id}`);
+      if (regsEl) {
+        regsEl.innerHTML = regs.map(r => `
+          <div class="registro-tag">
+            <div class="r-avatar" style="background:${r.cor}">${inicialPessoa(r.nome)}</div>
+            ${r.nome}
+            <span class="r-hora">· ${r.hora}</span>
+          </div>`).join('');
+      }
+    });
+    // badge
+    const badge = document.getElementById(`badge-${sec.id}`);
+    if (badge) {
+      badge.textContent = `${secFeitos}/${sec.itens.length}`;
+      badge.className = 'secao-badge' + (secFeitos === sec.itens.length ? ' completo' : '');
+    }
+  });
+  // barra de progresso
+  const pct = totalItens > 0 ? Math.round((totalFeitos/totalItens)*100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('res-feito').textContent = totalFeitos;
+  document.getElementById('res-falta').textContent = totalItens - totalFeitos;
+}
+
+/* ══════════════════════════════════════════
+   SEMÁFORO FRESCOS
+══════════════════════════════════════════ */
+function avaliarQtd(input, min, unit) {
+  const val = parseFloat(input.value);
+  const id = input.id.replace('qtd-','');
+  const sem = document.getElementById(`sem-${id}`);
+  const sta = document.getElementById(`qst-${id}`);
+  if (!sem || !sta) return;
+  if (isNaN(val) || input.value === '') {
+    sem.className = 'sem'; sta.className = 'qtd-status'; sta.textContent = ''; return;
+  }
+  if (val >= min) {
+    sem.className = 'sem ok'; sta.className = 'qtd-status ok'; sta.textContent = '✓ OK';
+  } else if (val > 0) {
+    sem.className = 'sem warn'; sta.className = 'qtd-status warn';
+    sta.textContent = `⚠ falta ${(min-val).toFixed(1).replace(/\.0$/,'')} ${unit}`;
+  } else {
+    sem.className = 'sem low'; sta.className = 'qtd-status low'; sta.textContent = '✗ Sem estoque';
+  }
+}
+
+/* ══════════════════════════════════════════
+   ABAS
+══════════════════════════════════════════ */
+function mudarAba(aba, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('ativa'));
+  el.classList.add('ativa');
+  document.getElementById('aba-checklist').style.display = aba === 'checklist' ? 'block' : 'none';
+  document.getElementById('aba-historico').style.display = aba === 'historico' ? 'block' : 'none';
+  if (aba === 'historico') carregarHistorico();
+}
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  document.getElementById('loading').style.display = 'none';
+  initLogin();
+});
+</script>
+</body>
+</html>
